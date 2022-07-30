@@ -2,66 +2,100 @@ import React, {useState} from "react";
 import NoteContext from "./noteContext";
 
 const NoteState = (props)=>{
-    let notesInitial=[
-        {
-          "_id": "62dfc51f26dc323a923cb911",
-          "user": "62dfc2c94c4807baa9839859",
-          "title": "New note",
-          "description": "Please access the playlist",
-          "tag": "Youtube",
-          "date": "2022-07-26T10:42:39.556Z",
+  const host="http://localhost:5000"
+    const notesInitial=[]  
+      const [notes, setNotes]=useState(notesInitial)
+      // GET ALL NOTES
+         const getNotes= async() =>{
+         //API call
+         const response = await fetch(`${host}/api/notes/fetchallnotes`, {
+          method: 'GET', 
+         
+          headers: {
+            'Content-Type': 'application/json',
+            "auth-token":'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjJlNGY0ZGY2MWM5YWU3ZDkzZDExMmRjIn0sImlhdCI6MTY1OTE3MjE5OX0.-0FSgQyEcAC-mpeya4lWXS5fQjAeRFJASbwau2fn8VY'
+            
+          }
+        });
+        const json= await response.json()
+            console.log(json);
+            setNotes(json)
+         }
+
+          // Add a Note
+  const addNote = async (title, description, tag) => {
+    
+    // API Call 
+    const response = await fetch(`${host}/api/notes/addnote`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        "auth-token": ' eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjJlNGY0ZGY2MWM5YWU3ZDkzZDExMmRjIn0sImlhdCI6MTY1OTE3MjE5OX0.-0FSgQyEcAC-mpeya4lWXS5fQjAeRFJASbwau2fn8VY'
+      },
+      body: JSON.stringify({title, description, tag})
+    });
+     
+
+    console.log("Adding a new note")
+    const note = {
+
+          "_id": "62e4f5dc61c9ae7d93d112e0",
+          "user": "62e4f4df61c9ae7d93d112dc",
+          "title": title,
+          "description": description,
+          "tag": tag,
+          "date": "2022-07-30T09:11:56.234Z",
           "__v": 0
-        },
-        {
-          "_id": "62e2c54b893a4f403a29b31e",
-          "user": "62dfc2c94c4807baa9839859",
-          "title": "About me",
-          "description": "I am a student",
-          "tag": "personal",
-          "date": "2022-07-28T17:20:11.918Z",
-          "__v": 0
-        },
-        {
-          "_id": "62dfc51f26dc323jna923cb911",
-          "user": "62dfc2c94c4807baa9839859",
-          "title": "New note",
-          "description": "Please access the playlist ",
-          "tag": "Youtube",
-          "date": "2022-07-26T10:42:39.556Z",
-          "__v": 0
-        },
-        {
-          "_id": "62e2c54b893a4f40dx3a29b31e",
-          "user": "62dfc2c94c4807baa9839859",
-          "title": "About me",
-          "description": "I am a student",
-          "tag": "personal",
-          "date": "2022-07-28T17:20:11.918Z",
-          "__v": 0
-        },
-        {
-          "_id": "62dfc51f26dc323a9jb23cb911",
-          "user": "62dfc2c94c4807baa9839859",
-          "title": "New note ",
-          "description": "Please access the playlist ",
-          "tag": "Youtube",
-          "date": "2022-07-26T10:42:39.556Z",
-          "__v": 0
-        },
-        {
-          "_id": "62e2c54b893a4f403jba29b31e",
-          "user": "62dfc2c94c4807baa9839859",
-          "title": "About me",
-          "description": "I am a student",
-          "tag": "personal",
-          "date": "2022-07-28T17:20:11.918Z",
-          "__v": 0
-        }
-      ]
-      const [notes, setNotes]=useState(notesInitial);
+    };
+     
+    setNotes(notes.concat(note))
+  }
+      //Delete a note
+      const deleteNote= async (id) =>{
+        //TODO:API CALL
+        const response = await fetch(`${host}/api/notes/deletenote/${id}`, {
+          method: 'DELETE', 
+         
+          headers: {
+            'Content-Type': 'application/json',
+            "auth-token":' eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjJlNGY0ZGY2MWM5YWU3ZDkzZDExMmRjIn0sImlhdCI6MTY1OTE3MjE5OX0.-0FSgQyEcAC-mpeya4lWXS5fQjAeRFJASbwau2fn8VY'
+          },
+        });
+        const json= response.json(); 
+        console.log(json);
+          console.log("Deleting the note with id "+ id)
+          const newNotes=notes.filter((note)=>{return note._id!==id})
+          setNotes(newNotes)
+
+      }
+
+      //Edit a note
+      const editNote= async(id, title, description, tag) =>{
+        //API CALL
+        const response = await fetch(`${host}/api/notes/updatenote/${id}`, {
+          method: 'POST', 
+         
+          headers: {
+            'Content-Type': 'application/json',
+            "auth-token":' eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjJlNGY0ZGY2MWM5YWU3ZDkzZDExMmRjIn0sImlhdCI6MTY1OTE3MjE5OX0.-0FSgQyEcAC-mpeya4lWXS5fQjAeRFJASbwau2fn8VY'
+          },
+          body: JSON.stringify({title, description, tag})
+        });
+        const json= response.json(); 
+      
+        //Logic to edit in notes
+          for(let i=0; i<notes.length; i++){
+            const element= notes[i];
+            if(element._id===id){
+              element.title=title;
+              element.description=description;
+              element.tag=tag;
+            }
+          }
+      }
    
     return (
-    <NoteContext.Provider value={{notes, setNotes}}>
+    <NoteContext.Provider value={{notes, addNote, deleteNote, editNote, getNotes}}>
         {props.children}
     </NoteContext.Provider>
     )
